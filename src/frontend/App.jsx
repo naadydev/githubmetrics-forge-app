@@ -43,8 +43,8 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState(JSON.parse(config?.usersList || '[]'));
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [repos, setRepos] = useState(JSON.parse(config?.reposList || '[]'));
-  const [selectedRepos, setSelectedRepos] = useState([]);
+  // const [repos, setRepos] = useState(JSON.parse(config?.reposList || '[]'));
+  // const [selectedRepos, setSelectedRepos] = useState([]);
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -77,15 +77,15 @@ export const App = () => {
     setUsers([...users, user]);
   };
 
-  const handleRepoClick = (repo) => {
-    setRepos(repos.filter(r => r !== repo));
-    setSelectedRepos([...selectedRepos, repo]);
-  };
+  // const handleRepoClick = (repo) => {
+  //   setRepos(repos.filter(r => r !== repo));
+  //   setSelectedRepos([...selectedRepos, repo]);
+  // };
 
-  const handleSelectedRepoClick = (repo) => {
-    setSelectedRepos(selectedRepos.filter(r => r !== repo));
-    setRepos([...repos, repo]);
-  };
+  // const handleSelectedRepoClick = (repo) => {
+  //   setSelectedRepos(selectedRepos.filter(r => r !== repo));
+  //   setRepos([...repos, repo]);
+  // };
 
   const validateForm = () => {
     let isValid = true;
@@ -96,10 +96,10 @@ export const App = () => {
       errors.users = 'Please select at least one user.';
     }
 
-    if (!selectedRepos.length) {
-      isValid = false;
-      errors.repos = 'Please select at least one repository.';
-    }
+    // if (!selectedRepos.length) {
+    //   isValid = false;
+    //   errors.repos = 'Please select at least one repository.';
+    // }
 
     if (!fromDate || !toDate) {
       isValid = false;
@@ -144,18 +144,19 @@ export const App = () => {
       setIsLoading(true);
 
       const payload = {
+        // repos: selectedRepos,
         users: selectedUsers,
-        repos: selectedRepos,
         startDate: fromDate,
         endDate: toDate,
       };
 
+      // ------------------------
       //#region For Test
-      waitForSpecificTime(() => {
-        console.log('This code will execute after 3 seconds.');
-        console.log(payload);
-        setIsLoading(false);
-      }, 5000);
+      // waitForSpecificTime(() => {
+      //   console.log('This code will execute after 3 seconds.');
+      //   console.log(payload);
+      //   setIsLoading(false);
+      // }, 5000);
       //#endregion
 
       //#region Using Backend
@@ -172,8 +173,8 @@ export const App = () => {
   };
 
   const listStyle = xcss({
-    minWidth: '370px',
-    minHeight: '90px',
+    minWidth: '500px',
+    minHeight: '100px',
     borderRadius: 'border.radius',
     borderStyle: 'solid',
     borderWidth: 'border.width',
@@ -185,11 +186,14 @@ export const App = () => {
     <Inline space="space.100" alignBlock="start" alignInline="center">
       <Stack space="space.100" alignBlock="start" alignInline="center">
         <LoadingComponent isLoading={isLoading} />
-        <Inline space="space.100" alignBlock="start" alignInline="center">
-          <ReposStack />
-          <UsersStack />
+        <Inline key="row1" space="space.100" alignBlock="start" alignInline="center">
+          <Row1LeftStack />
+          <Row1RightStack />
         </Inline>
-        <Inline space="space.100" alignBlock="start" alignInline="center">
+        <Inline key="row2" space="space.100" alignBlock="start" alignInline="center">
+          <Row2Stack />
+        </Inline>
+        <Inline key="row3" space="space.100" alignBlock="start" alignInline="center">
           <Box xcss={{ margin: 'space.400' }}>
             <LoadingButton appearance="primary" onClick={handleGetMetricsClick} isLoading={isLoading}>Get Metrics</LoadingButton>
           </Box>
@@ -198,12 +202,14 @@ export const App = () => {
     </Inline>
   );
 
-  const ReposStack = () => (
+  const Row1LeftStack = () => (
     <Stack space="space.100" grow="hug">
       <Heading as="h2">From:</Heading>
+      <Box xcss={{ margin: 'space.075', minWidth:200 }}>
       <DatePicker name="startDate" value={fromDate} label="Start Date" description="Select the start date" onChange={(value) => setFromDate(value)} />
-      <Heading as="h2">Repos List:AAA1</Heading>
-      <Box xcss={listStyle}>
+      </Box>
+      {/* <Heading as="h2">Repos List:AAA1</Heading>
+       <Box xcss={listStyle}>
         {repos.map((repo, index) => (
           <Box key={index} xcss={{ margin: 'space.075' }}>
             <LinkButton target='_self' href='#' appearance="subtle" onClick={() => handleRepoClick(repo)}>
@@ -223,14 +229,12 @@ export const App = () => {
             </LinkButton>
           </Box>
         ))}
-      </Box>
+      </Box> */}
     </Stack>
   );
 
-  const UsersStack = () => (
+  const Row2Stack = () => (
     <Stack space="space.100" grow="hug">
-      <Heading as="h2">To:</Heading>
-      <DatePicker name="endDate" value={toDate} label="End Date" description="Select the end date" onChange={(value) => setToDate(value)} />
       <Heading as="h2">Users List:</Heading>
       <Box xcss={listStyle}>
         {users.map((user, index) => (
@@ -247,6 +251,31 @@ export const App = () => {
           </LinkButton>
         ))}
       </Box>
+    </Stack>
+  );
+
+  const Row1RightStack = () => (
+    <Stack space="space.100" grow="hug">
+      <Heading as="h2">To:</Heading>
+      <Box xcss={{ margin: 'space.075', minWidth:200 }}>
+      <DatePicker name="endDate" value={toDate} label="End Date" description="Select the end date" onChange={(value) => setToDate(value)} />
+      </Box>
+      {/* <Heading as="h2">Users List:</Heading>
+      <Box xcss={listStyle}>
+        {users.map((user, index) => (
+          <LinkButton key={index} target='_self' href='#' appearance="subtle" onClick={() => handleUserClick(user)}>
+            <User accountId={user.atlassianAccountId} />
+          </LinkButton>
+        ))}
+      </Box>
+      <Heading as="h2">Selected Users:</Heading>
+      <Box xcss={listStyle}>
+        {selectedUsers.map((user, index) => (
+          <LinkButton key={index} target='_self' href='#' appearance="subtle" onClick={() => handleSelectedUserClick(user)}>
+            <User accountId={user.atlassianAccountId} />
+          </LinkButton>
+        ))}
+      </Box> */}
     </Stack>
   );
 
