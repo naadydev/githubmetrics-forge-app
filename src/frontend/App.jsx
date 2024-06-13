@@ -150,12 +150,15 @@ export const App = () => {
         endDate: toDate,
       };
 
+      //#region For Test
       waitForSpecificTime(() => {
         console.log('This code will execute after 3 seconds.');
         console.log(payload);
         setIsLoading(false);
       }, 5000);
+      //#endregion
 
+      //#region Using Backend
       // ToDo: Uncomment
       // invoke('fetchMetrics', payload)
       //   .then((metrics) => {
@@ -164,6 +167,7 @@ export const App = () => {
       //   .catch((error) => {
       //     console.error("Failed to fetch metrics:", error);
       //   });
+      //#endregion
     }
   };
 
@@ -196,9 +200,9 @@ export const App = () => {
 
   const ReposStack = () => (
     <Stack space="space.100" grow="hug">
-      <Heading as="h2">From:4</Heading>
-      <DatePicker name="startDate" label="Start Date" description="Select the start date" onChange={(value) => setFromDate(value)} />
-      <Heading as="h2">Repos List:AAA</Heading>
+      <Heading as="h2">From:</Heading>
+      <DatePicker name="startDate" value={fromDate} label="Start Date" description="Select the start date" onChange={(value) => setFromDate(value)} />
+      <Heading as="h2">Repos List:AAA1</Heading>
       <Box xcss={listStyle}>
         {repos.map((repo, index) => (
           <Box key={index} xcss={{ margin: 'space.075' }}>
@@ -226,7 +230,7 @@ export const App = () => {
   const UsersStack = () => (
     <Stack space="space.100" grow="hug">
       <Heading as="h2">To:</Heading>
-      <DatePicker name="endDate" label="End Date" description="Select the end date" onChange={(value) => setToDate(value)} />
+      <DatePicker name="endDate" value={toDate} label="End Date" description="Select the end date" onChange={(value) => setToDate(value)} />
       <Heading as="h2">Users List:</Heading>
       <Box xcss={listStyle}>
         {users.map((user, index) => (
