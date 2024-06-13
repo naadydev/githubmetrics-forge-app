@@ -35,7 +35,6 @@ import ForgeReconciler, {
 } from '@forge/react';
 import { defaultConfig } from './components/Config';
 import LoadingComponent from './components/LoadingComponent';
-import { fetch } from '@forge/api';
 
 export const App = () => {
   const config = useConfig() || defaultConfig;
@@ -324,36 +323,36 @@ export const App = () => {
   // }
 
 
-  async function getMetrics() {
-    try {
-      const url = 'https://sefmetrics-rurgymcszq-uc.a.run.app/users-metrics';
-      const bodyData = {
-        "funckey": "424903837056DkLDYIQWwmKokS9sUul",
-        "userNameList": [
-          "wolfgangbecker",
-          "TaylorBriggs"
-        ],
-        "fromDate": "2024-01-01",
-        "toDate": "2024-03-29"
-      };
+  // async function getMetrics() {
+  //   try {
+  //     const url = 'https://sefmetrics-rurgymcszq-uc.a.run.app/users-metrics';
+  //     const bodyData = {
+  //       "funckey": "424903837056DkLDYIQWwmKokS9sUul",
+  //       "userNameList": [
+  //         "wolfgangbecker",
+  //         "TaylorBriggs"
+  //       ],
+  //       "fromDate": "2024-01-01",
+  //       "toDate": "2024-03-29"
+  //     };
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyData)
-      });
-      // const status = response.status;
-      if (!response.ok) {
-        return `An error has occurred: ${response.statusText}`;
-      }
-      const responseData = await response.json();
-      return responseData;
-    } catch (error) {
-      return error;
-    }
-  }
+  //     const response = await fetch(url, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify(bodyData)
+  //     });
+  //     // const status = response.status;
+  //     if (!response.ok) {
+  //       return `An error has occurred: ${response.statusText}`;
+  //     }
+  //     const responseData = await response.json();
+  //     return responseData;
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // }
 
   const handleGetMetricsClick = async () => {
     const { isValid, errorsList } = validateForm();
@@ -370,11 +369,12 @@ export const App = () => {
         startDate: fromDate,
         endDate: toDate,
       };
-   
+
+      console.log("Payload:>>>", payload);
       //#region Using Backend
       invoke('getMetrics', payload)
         .then((metrics) => {
-          console.log("Metrics fetched successfully:", metrics);
+          console.log("Metrics fetched successfully:>>", metrics);
           setData(metrics)
           setIsLoading(false);
         })
