@@ -166,7 +166,7 @@ export const App = () => {
 
   const Row1LeftStack = () => (
     <Stack space="space.100" grow="hug">
-      <Heading as="h2">FromAAAaaa:</Heading>
+      <Heading as="h2">From:</Heading>
       <Box xcss={{ margin: 'space.075', minWidth: 200 }}>
         <DatePicker name="startDate" value={fromDate} label="Start Date" description="Select the start date" onChange={(value) => setFromDate(value)} />
       </Box>
@@ -206,6 +206,7 @@ export const App = () => {
         ))}
       </Box>
       <Heading as="h2">Selected Users:</Heading>
+
       <Box xcss={listStyle}>
         {selectedUsers.map((user, index) => (
           <LinkButton key={index} target='_self' href='#' appearance="subtle" onClick={() => handleSelectedUserClick(user)}>
@@ -259,46 +260,57 @@ export const App = () => {
     </ModalTransition>
   );
 
-  const head = {
-    cells: [
-      { "key": "User", "content": "User" },
-      { "key": "Commits", "content": "Commits" },
-      { "key": "PRs", "content": "PRs" },
-      { "key": "Reviews", "content": "Reviews" },
-    ],
-  };
 
-  const rows = [
-    {
-      "key": "1",
-      "cells": [
-        { "key": 0, "content": <User accountId="5b2c4b00d2f5b64e4d21afe4" /> },
+  function GithubResultTable({ data }) {
+console.log('data:',data);
+
+    const head = {
+      cells: [
+        { "key": "User", "content": "User" },
+        { "key": "Commits", "content": "Commits" },
+        { "key": "PRs", "content": "PRs" },
+        { "key": "Reviews", "content": "Reviews" },
+        { "key": "Details", "content": "Details" },
+      ],
+    };
+
+    const onBtnClick = () => {
+      alert('clicked');
+    }
+
+    const rows = [
+      {
+        "key": "1",
+        "cells": [{ "key": 0, "content": <User accountId="5b2c4b00d2f5b64e4d21afe4" /> },
         { "key": 1, "content": <Lozenge appearance="success" isBold>20</Lozenge> },
         { "key": 2, "content": <Lozenge appearance="success">30</Lozenge> },
-        { "key": 3, "content": "14" }
-      ]
-    },
-    {
-      "key": "2",
-      "cells": [
-        { "key": 0, "content": <User accountId="606242ceaee24000685b8fb1" /> },
-        { "key": 1, "content": "20" },
-        { "key": 2, "content": "50" },
-        { "key": 3, "content": "40" },
-      ]
-    }
-  ];
+        { "key": 3, "content": "14" },
+        { "key": 4, "content": <Button appearance="link" onClick={onBtnClick}>Repos</Button> }
+        ]
+      },
+      {
+        "key": "2",
+        "cells": [
+          { "key": 0, "content": <User accountId="606242ceaee24000685b8fb1" /> },
+          { "key": 1, "content": "20" },
+          { "key": 2, "content": "50" },
+          { "key": 3, "content": "40" },
+          { "key": 4, "content": <Button appearance="link" onClick={onBtnClick}>Repos</Button> }
+        ]
+      }
+    ];
 
-  const GithubResultTable = () => (
-    <DynamicTable
-      caption="GitHub Metrics"
-      isLoading={isLoading}
-      head={head}
-      rows={rows}
-      isRankable
-      emptyView="No data to display"
-    />
-  );
+    return (
+      <DynamicTable
+        caption="GitHub Metrics"
+        isLoading={isLoading}
+        head={head}
+        rows={rows}
+        isRankable
+        emptyView="No data to display"
+      />);
+
+  }
 
   // const getMetrics = async () => {
   //   // https://github.com/node-fetch/node-fetch#options
@@ -402,7 +414,7 @@ export const App = () => {
       {isLoading ?
         <Inline space="space.100" alignBlock="center" alignInline="center"><Spinner size={80} /></Inline>
         :
-        <GithubResultTable />}
+        <GithubResultTable data={data} />}
       <AppModal />
     </>
   );
