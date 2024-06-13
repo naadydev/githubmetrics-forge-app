@@ -167,7 +167,7 @@ export const App = () => {
 
   const Row1LeftStack = () => (
     <Stack space="space.100" grow="hug">
-      <Heading as="h2">From:</Heading>
+      <Heading as="h2">FromAAAaaa:</Heading>
       <Box xcss={{ margin: 'space.075', minWidth: 200 }}>
         <DatePicker name="startDate" value={fromDate} label="Start Date" description="Select the start date" onChange={(value) => setFromDate(value)} />
       </Box>
@@ -301,29 +301,61 @@ export const App = () => {
     />
   );
 
-  const getMetrics = async () => {
-    // https://github.com/node-fetch/node-fetch#options
-    const body = {
-      "funckey": "424903837056DkLDYIQWwmKokS9sUul",
-      "userNameList": [
-        "wolfgangbecker",
-        "TaylorBriggs"
-      ],
-      "fromDate": "2024-01-01",
-      "toDate": "2024-03-29"
-    };
-    const parsedBody = JSON.stringify(body);
-    const response = await fetch("https://sefmetrics-rurgymcszq-uc.a.run.app/users-metrics", {
-      method: 'POST',
-      body: parsedBody,
-      // headers: {'Content-Type': 'application/json'}
-    });
-    const status = response.status;
-    const data = await response.json();
-    console.log(data);
+  // const getMetrics = async () => {
+  //   // https://github.com/node-fetch/node-fetch#options
+  //   const body = {
+  //     "funckey": "424903837056DkLDYIQWwmKokS9sUul",
+  //     "userNameList": [
+  //       "wolfgangbecker",
+  //       "TaylorBriggs"
+  //     ],
+  //     "fromDate": "2024-01-01",
+  //     "toDate": "2024-03-29"
+  //   };
+  //   //const parsedBody = JSON.stringify(body);
+  //   const response = await fetch("https://sefmetrics-rurgymcszq-uc.a.run.app/users-metrics", {
+  //     method: 'POST',
+  //     body: body,
+  //     // headers: {'Content-Type': 'application/json'}
+  //   });
+  //   const status = response.status;
+  //   const data = await response.json();
+  //   console.log(data);
+  // }
+
+
+  async function getMetrics() {
+    try {
+      const url = 'https://sefmetrics-rurgymcszq-uc.a.run.app/users-metrics';
+      const bodyData = {
+        "funckey": "424903837056DkLDYIQWwmKokS9sUul",
+        "userNameList": [
+          "wolfgangbecker",
+          "TaylorBriggs"
+        ],
+        "fromDate": "2024-01-01",
+        "toDate": "2024-03-29"
+      };
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+      });
+      // const status = response.status;
+      if (!response.ok) {
+        return `An error has occurred: ${response.statusText}`;
+      }
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      return error;
+    }
   }
 
-  const handleGetMetricsClick = () => {
+  const handleGetMetricsClick = async () => {
     const { isValid, errorsList } = validateForm();
     if (!isValid) {
       setModalHeader('Form Validation');
@@ -338,7 +370,18 @@ export const App = () => {
         startDate: fromDate,
         endDate: toDate,
       };
-
+   
+      //#region Using Backend
+      invoke('getMetrics', payload)
+        .then((metrics) => {
+          console.log("Metrics fetched successfully:", metrics);
+          setData(metrics)
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch metrics:", error);
+        });
+      //#endregion
       // ------------------------
       //#region For Test
       // waitForSpecificTime(() => {
@@ -348,16 +391,7 @@ export const App = () => {
       // }, 5000);
       //#endregion
 
-      //#region Using Backend
-      // ToDo: Uncomment
-      // invoke('fetchMetrics', payload)
-      //   .then((metrics) => {
-      //     console.log("Metrics fetched successfully:", metrics);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Failed to fetch metrics:", error);
-      //   });
-      //#endregion
+
     }
   };
 
