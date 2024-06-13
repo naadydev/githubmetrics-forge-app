@@ -1,0 +1,31 @@
+> npm install
+> forge deploy --environment production
+> forge install --environment production
+** > forge install --upgrade --environment production
+> forge uninstall
+
+https://developer.atlassian.com/console/myapps
+==================
+GCP: Consol
+https://console.cloud.google.com/projectselector2/home/dashboard
+https://console.cloud.google.com/home/dashboard?authuser=1&project=wanted-weasel
+=================
+//#region Configuration
+// https://atlassian.design/components/icon/icon-explorer
+// you can get users account id from https://zombie.atlassian.net/wiki/people/search
+// https://zombie.atlassian.net/wiki/people/search
+// https://github.com/orgs/cobalthq/people
+=================
+ const [data, setData] = useState(null);
+
+  useEffect(() => {
+    invoke('getText', { example: 'my-invoke-variable' }).then(setData);
+  }, []);
+
+  return (
+    <>
+      <Text>Hello world!</Text>
+      <Text>{data ? data : 'Loading...'}</Text>
+    </>
+  );
+  ======

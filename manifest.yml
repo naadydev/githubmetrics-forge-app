@@ -1,0 +1,30 @@
+modules:
+  macro:
+    - key: sef-app
+      resource: main
+      render: native
+      resolver:
+        function: resolver
+      title: sef-app
+      config: true
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: src/frontend/index.jsx
+app:
+  runtime:
+    name: nodejs18.x
+  id: ari:cloud:ecosystem::app/d34799c6-3a90-46ce-b5eb-b71c734e31d9
+permissions:
+  external:
+    fetch:
+      backend:
+        - 'https://api.github.com/*'
+        - 'https://sefmetrics-rurgymcszq-uc.a.run.app'
+      client:
+        - 'https://api.github.com/*'
+        - 'https://sefmetrics-rurgymcszq-uc.a.run.app'
+    images:
+      - https://media.giphy.com
