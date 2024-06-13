@@ -35,6 +35,7 @@ import ForgeReconciler, {
 } from '@forge/react';
 import { defaultConfig } from './components/Config';
 import LoadingComponent from './components/LoadingComponent';
+import { fetch } from '@forge/api';
 
 export const App = () => {
   const config = useConfig() || defaultConfig;
@@ -134,44 +135,6 @@ export const App = () => {
     return { isValid, errorsList };
   };
 
-  const handleGetMetricsClick = () => {
-    const { isValid, errorsList } = validateForm();
-    if (!isValid) {
-      setModalHeader('Form Validation');
-      setModalBody(errorsList);
-      setIsModalOpen(true);
-    } else {
-      setIsLoading(true);
-
-      const payload = {
-        // repos: selectedRepos,
-        users: selectedUsers,
-        startDate: fromDate,
-        endDate: toDate,
-      };
-
-      // ------------------------
-      //#region For Test
-      // waitForSpecificTime(() => {
-      //   console.log('This code will execute after 3 seconds.');
-      //   console.log(payload);
-      //   setIsLoading(false);
-      // }, 5000);
-      //#endregion
-
-      //#region Using Backend
-      // ToDo: Uncomment
-      // invoke('fetchMetrics', payload)
-      //   .then((metrics) => {
-      //     console.log("Metrics fetched successfully:", metrics);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Failed to fetch metrics:", error);
-      //   });
-      //#endregion
-    }
-  };
-
   const listStyle = xcss({
     minWidth: '500px',
     minHeight: '100px',
@@ -205,8 +168,8 @@ export const App = () => {
   const Row1LeftStack = () => (
     <Stack space="space.100" grow="hug">
       <Heading as="h2">From:</Heading>
-      <Box xcss={{ margin: 'space.075', minWidth:200 }}>
-      <DatePicker name="startDate" value={fromDate} label="Start Date" description="Select the start date" onChange={(value) => setFromDate(value)} />
+      <Box xcss={{ margin: 'space.075', minWidth: 200 }}>
+        <DatePicker name="startDate" value={fromDate} label="Start Date" description="Select the start date" onChange={(value) => setFromDate(value)} />
       </Box>
       {/* <Heading as="h2">Repos List:AAA1</Heading>
        <Box xcss={listStyle}>
@@ -257,8 +220,8 @@ export const App = () => {
   const Row1RightStack = () => (
     <Stack space="space.100" grow="hug">
       <Heading as="h2">To:</Heading>
-      <Box xcss={{ margin: 'space.075', minWidth:200 }}>
-      <DatePicker name="endDate" value={toDate} label="End Date" description="Select the end date" onChange={(value) => setToDate(value)} />
+      <Box xcss={{ margin: 'space.075', minWidth: 200 }}>
+        <DatePicker name="endDate" value={toDate} label="End Date" description="Select the end date" onChange={(value) => setToDate(value)} />
       </Box>
       {/* <Heading as="h2">Users List:</Heading>
       <Box xcss={listStyle}>
@@ -337,6 +300,67 @@ export const App = () => {
       emptyView="No data to display"
     />
   );
+
+  const getMetrics = async () => {
+    // https://github.com/node-fetch/node-fetch#options
+    const body = {
+      "funckey": "424903837056DkLDYIQWwmKokS9sUul",
+      "userNameList": [
+        "wolfgangbecker",
+        "TaylorBriggs"
+      ],
+      "fromDate": "2024-01-01",
+      "toDate": "2024-03-29"
+    };
+    const parsedBody = JSON.stringify(body);
+    const response = await fetch("https://sefmetrics-rurgymcszq-uc.a.run.app/users-metrics", {
+      method: 'POST',
+      body: parsedBody,
+      // headers: {'Content-Type': 'application/json'}
+    });
+    const status = response.status;
+    const data = await response.json();
+    console.log(data);
+  }
+
+  const handleGetMetricsClick = () => {
+    const { isValid, errorsList } = validateForm();
+    if (!isValid) {
+      setModalHeader('Form Validation');
+      setModalBody(errorsList);
+      setIsModalOpen(true);
+    } else {
+      setIsLoading(true);
+
+      const payload = {
+        // repos: selectedRepos,
+        users: selectedUsers,
+        startDate: fromDate,
+        endDate: toDate,
+      };
+
+      // ------------------------
+      //#region For Test
+      // waitForSpecificTime(() => {
+      //   console.log('This code will execute after 3 seconds.');
+      //   console.log(payload);
+      //   setIsLoading(false);
+      // }, 5000);
+      //#endregion
+
+      //#region Using Backend
+      // ToDo: Uncomment
+      // invoke('fetchMetrics', payload)
+      //   .then((metrics) => {
+      //     console.log("Metrics fetched successfully:", metrics);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Failed to fetch metrics:", error);
+      //   });
+      //#endregion
+    }
+  };
+
 
   return (
     <>
