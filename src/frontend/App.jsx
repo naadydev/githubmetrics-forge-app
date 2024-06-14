@@ -300,58 +300,6 @@ export const App = () => {
     }
   };
 
-
-  function GithubResultTableV1({ data }) {
-    console.log('data:', data);
-
-    const head = {
-      cells: [
-        { "key": "User", "content": "User" },
-        { "key": "Commits", "content": "Commits" },
-        { "key": "PRs", "content": "PRs" },
-        { "key": "Reviews", "content": "Reviews" },
-        { "key": "Details", "content": "Details" },
-      ],
-    };
-
-    const onBtnClick = () => {
-      alert('clicked');
-    }
-
-    const rows = [
-      {
-        "key": "1",
-        "cells": [{ "key": 0, "content": <User accountId="5b2c4b00d2f5b64e4d21afe4" /> },
-        { "key": 1, "content": <Lozenge appearance="success" isBold>20</Lozenge> },
-        { "key": 2, "content": <Lozenge appearance="success">30</Lozenge> },
-        { "key": 3, "content": "14" },
-        { "key": 4, "content": <Button appearance="link" onClick={onBtnClick}>Repos</Button> }
-        ]
-      },
-      {
-        "key": "2",
-        "cells": [
-          { "key": 0, "content": <User accountId="606242ceaee24000685b8fb1" /> },
-          { "key": 1, "content": "20" },
-          { "key": 2, "content": "50" },
-          { "key": 3, "content": "40" },
-          { "key": 4, "content": <Button appearance="link" onClick={onBtnClick}>Repos</Button> }
-        ]
-      }
-    ];
-
-    return (
-      <DynamicTable
-        caption="GitHub Metrics"
-        isLoading={isLoading}
-        head={head}
-        rows={rows}
-        isRankable
-        emptyView="No data to display"
-      />);
-
-  }
-
   function GithubResultTable({ data }) {
     const head = {
       cells: [
@@ -391,16 +339,44 @@ export const App = () => {
     // ];
 
     // Check if `data` exists and is not empty
-    const rows = data && data.length > 0 ? data.map((item, index) => ({
-      key: index.toString(), // Use a unique key for each row
-      cells: [
-        { "key": 0, "content": <User accountId="606242ceaee24000685b8fb1" /> },
-        { "key": 1, "content": "20" },
-        { "key": 2, "content": "50" },
-        { "key": 3, "content": "40" },
-        { "key": 4, "content": <Button appearance="link" onClick={() => onBtnClick(item)}>Details</Button> }
-      ]
-    })) : [];
+
+    // const usersList = [
+    //   { "gitHubUserName": "wolfgangbecker", "displayName": "Wolfgang", "avatar_url": "url", "atlassianAccountId": "5b2c4b00d2f5b64e4d21afe4" },
+    //   { "gitHubUserName": "davidgm0", "displayName": "David Mora", "avatar_url": "url", "atlassianAccountId": "606242ceaee24000685b8fb1" },
+    //   { "gitHubUserName": "mohitkyadav", "displayName": "Mohit Yadav", "avatar_url": "url", "atlassianAccountId": "6243931df813eb006928eaea" }
+    // ];
+    const rows = data && data.length > 0 ? data.map((item, index) => {
+      const userItem = users.find(user => user.gitHubUserName === item.userName);
+      if (userItem) {
+        console.log("User found:", userItem);
+        return ({
+          key: index.toString(), // Use a unique key for each row
+          cells: [
+            { "key": 0, "content": <User accountId={userItem.atlassianAccountId} /> },
+            { "key": 1, "content": "20" },
+            { "key": 2, "content": "50" },
+            { "key": 3, "content": "40" },
+            { "key": 4, "content": <Button appearance="link" onClick={() => onBtnClick(item)}>Details</Button> }
+          ]
+        });
+      } else {
+        console.log("User not found in the config json list");
+        return ({
+          key: index.toString(), // Use a unique key for each row
+          cells: [
+            { "key": 0, "content": "User not found in the config json list" },
+            { "key": 1, "content": "-" },
+            { "key": 2, "content": "-" },
+            { "key": 3, "content": "-" },
+            { "key": 4, "content": "-" }
+          ]
+        });
+      }
+    
+    }
+    ) : [];
+
+    console.log('users>>>', users);
 
     return (
       <DynamicTable
