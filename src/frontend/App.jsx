@@ -260,7 +260,48 @@ export const App = () => {
     </ModalTransition>
   );
 
-  function GithubResultTable({ data }) {
+
+  const handleGetMetricsClick = async () => {
+    const { isValid, errorsList } = validateForm();
+    if (!isValid) {
+      setModalHeader('Form Validation');
+      setModalBody(errorsList);
+      setIsModalOpen(true);
+    } else {
+      setIsLoading(true);
+
+      const payload = {
+        // repos: selectedRepos,
+        users: selectedUsers,
+        startDate: fromDate,
+        endDate: toDate,
+      };
+
+      // console.log("Payload:>>>", payload);
+      //#region Using Backend
+      invoke('getMetrics', payload)
+        .then((metrics) => {
+          console.log("Metrics fetched successfully:>>", metrics);
+          setData(metrics)
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch metrics:", error);
+        });
+      //#endregion
+      // ------------------------
+      //#region For Test
+      // waitForSpecificTime(() => {
+      //   console.log('This code will execute after 3 seconds.');
+      //   console.log(payload);
+      //   setIsLoading(false);
+      // }, 5000);
+      //#endregion
+    }
+  };
+
+
+  function GithubResultTableV1({ data }) {
     console.log('data:', data);
 
     const head = {
@@ -311,44 +352,67 @@ export const App = () => {
 
   }
 
-  const handleGetMetricsClick = async () => {
-    const { isValid, errorsList } = validateForm();
-    if (!isValid) {
-      setModalHeader('Form Validation');
-      setModalBody(errorsList);
-      setIsModalOpen(true);
-    } else {
-      setIsLoading(true);
+  function GithubResultTable({ data }) {
+    const head = {
+      cells: [
+        { "key": "User", "content": "User" },
+        { "key": "Commits", "content": "Commits" },
+        { "key": "PRs", "content": "PRs" },
+        { "key": "Reviews", "content": "Reviews" },
+        { "key": "Details", "content": "Details" },
+      ],
+    };
 
-      const payload = {
-        // repos: selectedRepos,
-        users: selectedUsers,
-        startDate: fromDate,
-        endDate: toDate,
-      };
-
-      // console.log("Payload:>>>", payload);
-      //#region Using Backend
-      invoke('getMetrics', payload)
-        .then((metrics) => {
-          console.log("Metrics fetched successfully:>>", metrics);
-          setData(metrics)
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error("Failed to fetch metrics:", error);
-        });
-      //#endregion
-      // ------------------------
-      //#region For Test
-      // waitForSpecificTime(() => {
-      //   console.log('This code will execute after 3 seconds.');
-      //   console.log(payload);
-      //   setIsLoading(false);
-      // }, 5000);
-      //#endregion
+    const onBtnClick = (user) => {
+      console.log(user);
+      alert('clicked');
     }
-  };
+
+    // const rows = [
+    //   {
+    //     "key": "1",
+    //     "cells": [{ "key": 0, "content": <User accountId="5b2c4b00d2f5b64e4d21afe4" /> },
+    //     { "key": 1, "content": <Lozenge appearance="success" isBold>20</Lozenge> },
+    //     { "key": 2, "content": <Lozenge appearance="success">30</Lozenge> },
+    //     { "key": 3, "content": "14" },
+    //     { "key": 4, "content": <Button appearance="link" onClick={onBtnClick}>Repos</Button> }
+    //     ]
+    //   },
+    //   {
+    //     "key": "2",
+    //     "cells": [
+    //       { "key": 0, "content": <User accountId="606242ceaee24000685b8fb1" /> },
+    //       { "key": 1, "content": "20" },
+    //       { "key": 2, "content": "50" },
+    //       { "key": 3, "content": "40" },
+    //       { "key": 4, "content": <Button appearance="link" onClick={onBtnClick}>Repos</Button> }
+    //     ]
+    //   }
+    // ];
+
+    // Check if `data` exists and is not empty
+    const rows = data && data.length > 0 ? data.map((item, index) => ({
+      key: index.toString(), // Use a unique key for each row
+      cells: [
+        { "key": 0, "content": <User accountId="606242ceaee24000685b8fb1" /> },
+        { "key": 1, "content": "20" },
+        { "key": 2, "content": "50" },
+        { "key": 3, "content": "40" },
+        { "key": 4, "content": <Button appearance="link" onClick={() => onBtnClick(item)}>Details</Button> }
+      ]
+    })) : [];
+
+    return (
+      <DynamicTable
+        caption="GitHub Metrics"
+        isLoading={isLoading}
+        head={head}
+        rows={rows}
+        isRankable
+        emptyView="No data to display"
+      />
+    );
+  }
 
   return (
     <>
@@ -358,16 +422,17 @@ export const App = () => {
           <Spinner size={80} />
         </Inline>
       ) : (
-        <Box>
-          <Heading as="h2">Data</Heading>
-          {data && data.length > 0 ? (
-            data.map((user, index) => (
-              <Contributions key={index} data={user} />
-            ))
-          ) : (
-            <Heading as="h2">No Data Available</Heading>
-          )}
-        </Box>
+        <GithubResultTable data={data} />
+        // <Box>
+        //   <Heading as="h2">Data</Heading>
+        //   {data && data.length > 0 ? (
+        //     data.map((user, index) => (
+        //       <Contributions key={index} data={user} />
+        //     ))
+        //   ) : (
+        //     <Heading as="h2">No Data Available</Heading>
+        //   )}
+        // </Box>
       )}
 
       <AppModal />
