@@ -345,25 +345,26 @@ export const App = () => {
     //   { "gitHubUserName": "davidgm0", "displayName": "David Mora", "avatar_url": "url", "atlassianAccountId": "606242ceaee24000685b8fb1" },
     //   { "gitHubUserName": "mohitkyadav", "displayName": "Mohit Yadav", "avatar_url": "url", "atlassianAccountId": "6243931df813eb006928eaea" }
     // ];
-    
+
     const rows = data && data.length > 0 ? data.map((item, index) => {
-      const userItem = users.find(user => user.gitHubUserName === item.userName);
+      const userItem = selectedUsers.find(user => user.gitHubUserName === item.userName);
       if (userItem) {
         console.log("User found:", userItem);
         return ({
-          key: index.toString(), 
+          key: index.toString(),
           cells: [
             { "key": 0, "content": <User accountId={userItem.atlassianAccountId} /> },
-            { "key": 1, "content": <Lozenge appearance="success" isBold>{data.contributions.user.contributionsCollection.totalCommitContributions}</Lozenge> },
-            { "key": 2, "content": <Lozenge appearance="success" isBold>{data.contributions.user.contributionsCollection.totalPullRequestContributions}</Lozenge> },
-            { "key": 3, "content": <Lozenge appearance="success" isBold>{data.contributions.user.contributionsCollection.totalPullRequestReviewContributions}</Lozenge> },
+            // { "key": 1, "content": <Lozenge appearance="success" isBold>blabla</Lozenge> },
+            { "key": 1, "content": `${item.contributions.user.contributionsCollection.totalCommitContributions}` },
+            { "key": 2, "content": `${item.contributions.user.contributionsCollection.totalPullRequestContributions}` },
+            { "key": 3, "content": `${item.contributions.user.contributionsCollection.totalPullRequestReviewContributions}` },
             { "key": 4, "content": <Button appearance="link" onClick={() => onBtnClick(item)}>Details</Button> }
           ]
         });
       } else {
         console.log("User not found in the config json list");
         return ({
-          key: index.toString(), 
+          key: index.toString(),
           cells: [
             { "key": 0, "content": "User not found in the config json list" },
             { "key": 1, "content": "-" },
