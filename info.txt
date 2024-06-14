@@ -16,16 +16,3 @@ https://console.cloud.google.com/home/dashboard?authuser=1&project=wanted-weasel
 // https://zombie.atlassian.net/wiki/people/search
 // https://github.com/orgs/cobalthq/people
 =================
- const [data, setData] = useState(null);
-
-  useEffect(() => {
-    invoke('getText', { example: 'my-invoke-variable' }).then(setData);
-  }, []);
-
-  return (
-    <>
-      <Text>Hello world!</Text>
-      <Text>{data ? data : 'Loading...'}</Text>
-    </>
-  );
-  ======
