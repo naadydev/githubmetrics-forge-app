@@ -35,10 +35,10 @@ import ForgeReconciler, {
 } from '@forge/react';
 import { defaultConfig } from './components/Config';
 import LoadingComponent from './components/LoadingComponent';
+import Contributions from './components/Contributions';
 
 export const App = () => {
   const config = useConfig() || defaultConfig;
-
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState(JSON.parse(config?.usersList || '[]'));
@@ -260,9 +260,8 @@ export const App = () => {
     </ModalTransition>
   );
 
-
   function GithubResultTable({ data }) {
-console.log('data:',data);
+    console.log('data:', data);
 
     const head = {
       cells: [
@@ -312,60 +311,6 @@ console.log('data:',data);
 
   }
 
-  // const getMetrics = async () => {
-  //   // https://github.com/node-fetch/node-fetch#options
-  //   const body = {
-  //     "funckey": "424903837056DkLDYIQWwmKokS9sUul",
-  //     "userNameList": [
-  //       "wolfgangbecker",
-  //       "TaylorBriggs"
-  //     ],
-  //     "fromDate": "2024-01-01",
-  //     "toDate": "2024-03-29"
-  //   };
-  //   //const parsedBody = JSON.stringify(body);
-  //   const response = await fetch("https://sefmetrics-rurgymcszq-uc.a.run.app/users-metrics", {
-  //     method: 'POST',
-  //     body: body,
-  //     // headers: {'Content-Type': 'application/json'}
-  //   });
-  //   const status = response.status;
-  //   const data = await response.json();
-  //   console.log(data);
-  // }
-
-
-  // async function getMetrics() {
-  //   try {
-  //     const url = 'https://sefmetrics-rurgymcszq-uc.a.run.app/users-metrics';
-  //     const bodyData = {
-  //       "funckey": "424903837056DkLDYIQWwmKokS9sUul",
-  //       "userNameList": [
-  //         "wolfgangbecker",
-  //         "TaylorBriggs"
-  //       ],
-  //       "fromDate": "2024-01-01",
-  //       "toDate": "2024-03-29"
-  //     };
-
-  //     const response = await fetch(url, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(bodyData)
-  //     });
-  //     // const status = response.status;
-  //     if (!response.ok) {
-  //       return `An error has occurred: ${response.statusText}`;
-  //     }
-  //     const responseData = await response.json();
-  //     return responseData;
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // }
-
   const handleGetMetricsClick = async () => {
     const { isValid, errorsList } = validateForm();
     if (!isValid) {
@@ -382,7 +327,7 @@ console.log('data:',data);
         endDate: toDate,
       };
 
-      console.log("Payload:>>>", payload);
+      // console.log("Payload:>>>", payload);
       //#region Using Backend
       invoke('getMetrics', payload)
         .then((metrics) => {
@@ -402,19 +347,29 @@ console.log('data:',data);
       //   setIsLoading(false);
       // }, 5000);
       //#endregion
-
-
     }
   };
-
 
   return (
     <>
       <AppForm />
-      {isLoading ?
-        <Inline space="space.100" alignBlock="center" alignInline="center"><Spinner size={80} /></Inline>
-        :
-        <GithubResultTable data={data} />}
+      {isLoading ? (
+        <Inline space="space.100" alignBlock="center" alignInline="center">
+          <Spinner size={80} />
+        </Inline>
+      ) : (
+        <Box>
+          <Heading as="h2">Data</Heading>
+          {data && data.length > 0 ? (
+            data.map((user, index) => (
+              <Contributions key={index} data={user} />
+            ))
+          ) : (
+            <Heading as="h2">No Data Available</Heading>
+          )}
+        </Box>
+      )}
+
       <AppModal />
     </>
   );
