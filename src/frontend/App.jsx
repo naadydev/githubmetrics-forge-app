@@ -260,7 +260,6 @@ export const App = () => {
     </ModalTransition>
   );
 
-
   const handleGetMetricsClick = async () => {
     const { isValid, errorsList } = validateForm();
     if (!isValid) {
@@ -312,10 +311,12 @@ export const App = () => {
     };
 
     const onBtnClick = (user) => {
-      console.log(user);
-      alert('clicked');
+      setIsModalOpen(true);
+      setModalHeader(`${user.userName} Details`);
+      setModalBody(<Contributions data={user} />);
     }
 
+    //#region Test Data 
     // const rows = [
     //   {
     //     "key": "1",
@@ -345,11 +346,41 @@ export const App = () => {
     //   { "gitHubUserName": "davidgm0", "displayName": "David Mora", "avatar_url": "url", "atlassianAccountId": "606242ceaee24000685b8fb1" },
     //   { "gitHubUserName": "mohitkyadav", "displayName": "Mohit Yadav", "avatar_url": "url", "atlassianAccountId": "6243931df813eb006928eaea" }
     // ];
+    //#endregion
+
+
+    let totalCommits = 0;
+    let totalPRs = 0;
+    let totalReviews = 0;
+
+    const computeTotals = () => {
+      let totalCommits = 0;
+      let totalPRs = 0;
+      let totalReviews = 0;
+  
+      if (data && data.length > 0) {
+        data.forEach((item) => {
+          totalCommits += item.contributions.user.contributionsCollection.totalCommitContributions;
+          totalPRs += item.contributions.user.contributionsCollection.totalPullRequestContributions;
+          totalReviews += item.contributions.user.contributionsCollection.totalPullRequestReviewContributions;
+        });
+      }
+  
+      return {
+        key: 'total-row',
+        cells: [
+          { key: 0, content: <Heading as="h4">Total</Heading> },
+          { key: 1, content: <Lozenge appearance="success" isBold>{totalCommits.toString()}</Lozenge>  },
+          { key: 2, content: <Lozenge appearance="success" isBold>{totalPRs.toString()}</Lozenge>  },
+          { key: 3, content: <Lozenge appearance="success" isBold>{totalReviews.toString()}</Lozenge>  },
+          { key: 4, content: '' },
+        ],
+      };
+    };
 
     const rows = data && data.length > 0 ? data.map((item, index) => {
       const userItem = selectedUsers.find(user => user.gitHubUserName === item.userName);
       if (userItem) {
-        console.log("User found:", userItem);
         return ({
           key: index.toString(),
           cells: [
@@ -378,7 +409,9 @@ export const App = () => {
     }
     ) : [];
 
-    console.log('users>>>', users);
+    // console.log('users>>>', users);
+    const totalRow = computeTotals();
+    rows.push(totalRow);
 
     return (
       <DynamicTable
@@ -412,7 +445,6 @@ export const App = () => {
         //   )}
         // </Box>
       )}
-
       <AppModal />
     </>
   );
