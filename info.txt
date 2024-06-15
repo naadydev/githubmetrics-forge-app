@@ -1,3 +1,29 @@
+After Each change:
+forge deploy  -e production
+forge install -e production --upgrade
+
+forge uninstall
+---
+First Time: 
+sudo npm install 
+forge deploy  -e production
+forge install -e production
+---
+forge uninstall
+---
+https://developer.atlassian.com/console/myapps
+---
+Get users account id from 
+https://zombie.atlassian.net/wiki/people/search
+https://github.com/orgs/cobalthq/people
+---
+Icons => https://atlassian.design/components/icon/icon-explorer
+---
+GCP: Consol
+https://console.cloud.google.com/projectselector2/home/dashboard
+===========================================================================================
+
+
 > npm install
 > forge deploy --environment production
 > forge install --environment production
