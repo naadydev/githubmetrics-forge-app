@@ -39,9 +39,22 @@ import Contributions from './components/Contributions';
 
 export const App = () => {
   const config = useConfig() || defaultConfig;
+  const [context, setContext] = useState(undefined);
+  const [configUsersList, setConfigUsersList] = useState([]);
+
+  useEffect(() => {
+    // view.getContext().then(setContext);
+    view.getContext().then((context) => {
+      setContext(context);
+      setConfigUsersList(JSON.parse(context?.extension.config.usersList || '[]'));
+    });
+    // invoke('getText', { example: 'my-invoke-variable' }).then(setData);
+  }, []);
+
+
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [users, setUsers] = useState(JSON.parse(config?.usersList || '[]'));
+  const [usersCnfgLst, setUsersCnfgLst] = useState(JSON.parse(config?.usersList || '[]'));
   const [selectedUsers, setSelectedUsers] = useState([]);
   // const [repos, setRepos] = useState(JSON.parse(config?.reposList || '[]'));
   // const [selectedRepos, setSelectedRepos] = useState([]);
@@ -52,13 +65,6 @@ export const App = () => {
   const [modalBody, setModalBody] = useState('');
   const [showModalOkBtn, setShowModalOkBtn] = useState(true);
 
-  useEffect(() => {
-    // view.getContext().then((context) => {
-    //   setContext(context);
-    // });
-    // invoke('getText', { example: 'my-invoke-variable' }).then(setData);
-  }, []);
-
   const waitForSpecificTime = (callback, delay) => {
     setTimeout(callback, delay);
   };
@@ -68,13 +74,13 @@ export const App = () => {
   };
 
   const handleUserClick = (user) => {
-    setUsers(users.filter(u => u !== user));
+    setConfigUsersList(configUsersList.filter(u => u !== user));
     setSelectedUsers([...selectedUsers, user]);
   };
 
   const handleSelectedUserClick = (user) => {
     setSelectedUsers(selectedUsers.filter(u => u !== user));
-    setUsers([...users, user]);
+    setConfigUsersList([...configUsersList, user]);
   };
 
   // const handleRepoClick = (repo) => {
@@ -199,7 +205,7 @@ export const App = () => {
     <Stack space="space.100" grow="hug">
       <Heading as="h2">Users List:</Heading>
       <Box xcss={listStyle}>
-        {users.map((user, index) => (
+        {configUsersList.map((user, index) => (
           <LinkButton key={index} target='_self' href='#' appearance="subtle" onClick={() => handleUserClick(user)}>
             <User accountId={user.atlassianAccountId} />
           </LinkButton>
